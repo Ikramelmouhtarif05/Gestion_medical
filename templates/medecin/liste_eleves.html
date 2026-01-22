@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des élèves</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <header>
+    <nav class="container">
+        <div class="logo">🏥 Système Médical</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('medecin_dashboard') }}">Accueil</a></li>
+        </ul>
+    </nav>
+</header>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f7f9fc;
+            padding:30px;
+            color:#333;
+        }
+
+        h2{
+            text-align:center;
+            margin-bottom:25px;
+            font-size:28px;
+            font-weight:bold;
+            color:#2c3e50;
+        }
+
+        .table-container{
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 3px 10px rgba(0,0,0,0.1);
+            width:80%;
+            margin:auto;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            font-size:16px;
+        }
+
+        thead tr{
+            background:#007bff;
+            color:white;
+        }
+
+        th, td{
+            padding:12px;
+            text-align:center;
+            border-bottom:1px solid #ddd;
+        }
+
+        tbody tr:hover{
+            background:#eaf3ff;
+            cursor:pointer;
+        }
+
+        a.btn-view{
+            background:#28a745;
+            padding:7px 12px;
+            color:white;
+            text-decoration:none;
+            border-radius:5px;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        a.btn-view:hover{
+            background:#1e7e34;
+        }
+    </style>
+</head>
+<body>
+
+
+<h2>📋 Liste des élèves</h2>
+<div style="text-align:center;margin-bottom:20px;">
+    <input type="text" id="searchNE" placeholder="Entrer un NE..." 
+    style="width:250px;padding:8px;border-radius:5px;border:1px solid #ccc;font-size:16px;">
+
+    <button onclick="searchStudent()" 
+    style="padding:8px 12px;margin-left:10px;border:none;border-radius:5px;background:#007bff;color:white;font-size:16px;cursor:pointer;">
+        Rechercher
+    </button>
+
+    <button onclick="resetSearch()" 
+    style="padding:8px 12px;margin-left:5px;border:none;border-radius:5px;background:#6c757d;color:white;font-size:16px;cursor:pointer;">
+        Réinitialiser
+    </button>
+</div>
+
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>NE</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Classe</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    {% for e in eleves %}
+        <tr>
+            <td>{{ e.NE }}</td>
+            <td>{{ e.nom_eleve }}</td>
+            <td>{{ e.prénom_eleve }}</td>
+            <td>{{ e.classe_niveau_d_étude }}</td>
+            <td>
+                <a href="{{ url_for('medecin_dossier', ne=e.NE) }}" class="btn-view">
+                    Ouvrir dossier
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<script>
+function searchStudent(){
+    let input = document.getElementById("searchNE").value.toUpperCase();
+    let rows = document.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+        let ne = row.cells[0].textContent.toUpperCase();
+        row.style.display = ne.includes(input) ? "" : "none";
+    });
+}
+
+function resetSearch(){
+    document.getElementById("searchNE").value = "";
+    document.querySelectorAll("tbody tr").forEach(row => row.style.display = "");
+}
+</script>
+
+
+</body>
+</html>

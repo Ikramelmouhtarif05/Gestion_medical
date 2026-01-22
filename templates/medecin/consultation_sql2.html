@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation - Système Médical</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🏥 Système Médical</div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('medecin_dashboard') }}">Retour au dashboard</a></li>
+                <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>📋 Consultation Médicale</h2>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="card" style="margin-bottom: 2rem;">
+                        <h3>Informations du patient</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <strong>Nom:</strong> {{ consultation.prénom_eleve }} {{ consultation.nom_eleve }}
+                            </div>
+                            <div>
+                                <strong>Date de naissance:</strong> {{ consultation.date_naissance.strftime('%d/%m/%Y') }}
+                            </div>
+                            <div>
+                                <strong>Téléphone:</strong> {{ consultation.tele or 'Non renseigné' }}
+                            </div>
+                            <div>
+                                <strong>Date de consultation:</strong> {{ consultation.date_consult.strftime('%d/%m/%Y') }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-bottom: 2rem;">
+                        <h3>Antécédents médicaux</h3>
+                        <div class="form-group">
+                            <label><strong>Historique médical:</strong></label>
+                            <p>{{ consultation.mld_chr or 'Aucun antécédent connu' }}</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><strong>Groupe sanguin:</strong></label>
+                            <p>{{ consultation.groupe_sanguin or 'Non renseigné' }}</p>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('medecin_enregistrer_consultation') }}">
+                        <input type="hidden" name="id_consultation" value="{{ consultation.id_consultation }}">
+                        
+                        <div class="card" style="margin-bottom: 2rem;">
+                            <h3>Diagnostic et Examens</h3>
+                            
+                            <div class="form-group">
+                                <label for="analyses">Analyses et Examens</label>
+                                <textarea id="analyses" name="analyses" class="form-control" rows="4" placeholder="Décrire les analyses demandées: prise de sang, radio, ECG, etc...">{{ consultation.analyses or '' }}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="etat_malade">État de santé du patient</label>
+                                <textarea id="etat_malade" name="etat_malade" class="form-control" rows="4" placeholder="Décrire l'état actuel du patient, symptômes observés...">{{ consultation.état_malade or '' }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="margin-bottom: 2rem;">
+                            <h3>Ordonnance</h3>
+                            
+                            <div class="form-group">
+                                <label for="médicaments">Médicaments prescrits</label>
+                                <textarea id="médicaments" name="médicaments" class="form-control" rows="4" placeholder="Lister les médicaments avec dosage et fréquence..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="duree">Durée du traitement</label>
+                                <input type="text" id="duree" name="duree" class="form-control" placeholder="Ex: 7 jours, 2 semaines, 1 mois...">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <button type="submit" class="btn btn-secondary">Enregistrer la consultation</button>
+                            <a href="{{ url_for('medecin_dashboard') }}" class="btn btn-primary" style="text-align: center; text-decoration: none; display: block; padding: 12px 30px;">Retour au dashboard</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Système Médical.</p>
+        </div>
+    </footer>
+<script>
+let isSubmitting = false;
+let formSavedOnce = false; // ⬅ Nouveau flag 
+
+const form = document.querySelector('form');
+const inputs = form.querySelectorAll('input:not([type=hidden]), textarea, select');
+
+/* ===== Chargement des données ===== */
+inputs.forEach(input => {
+    if (!input.name) return;
+    const saved = localStorage.getItem(`consultation_${input.name}`);
+    if (saved && !input.value) input.value = saved;
+});
+
+/* ===== Sauvegarde automatique ===== */
+inputs.forEach(input => {
+    if (!input.name) return;
+    input.addEventListener('input', () => {
+        localStorage.setItem(`consultation_${input.name}`, input.value.trim());
+    });
+});
+
+/* ===== Soumission ===== */
+form.addEventListener('submit', function() {
+    isSubmitting = true;
+    formSavedOnce = true;   // ⬅ désactive l'alerte après sauvegarde
+
+    // vider le localStorage
+    inputs.forEach(input => {
+        if (!input.name) return;
+        localStorage.removeItem(`consultation_${input.name}`);
+    });
+});
+
+/* ===== Alerte sortie ===== */
+window.addEventListener('beforeunload', function(e) {
+    if (isSubmitting || formSavedOnce) return; // ⬅ IMPORTANT
+
+    const hasData = Array.from(inputs).some(input => {
+        if (input.tagName === "SELECT") return input.selectedIndex > 0;
+        return input.value.trim() !== "";
+    });
+
+    if (hasData) {
+        e.preventDefault();
+        e.returnValue = "";
+    }
+});
+</script>
+
+
+
+</body>
+</html>

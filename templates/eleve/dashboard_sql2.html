@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Élève - Système Médical</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+
+<body>
+<header>
+    <nav class="container">
+        <div class="logo">🏥 Système Médical</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}">Accueil</a></li>
+            <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+<div class="container">
+
+<div class="dashboard">
+<aside class="sidebar">
+    <h3>Bonjour {{ eleve.prénom_eleve }} !</h3>
+    <ul class="sidebar-menu">
+        <li><a href="{{ url_for('eleve_dashboard') }}" class="active">📊 Tableau de bord</a></li>
+        <li><a href="{{ url_for('eleve_prendre_rendez_vous') }}">📅 Prendre rendez-vous</a></li>
+        <li><a href="{{ url_for('eleve_dossier_medical') }}">📁 Dossier médical</a></li>
+        <li><a href="{{ url_for('eleve_ordonnances') }}">💊 Ordonnances</a></li>
+        <li><a href="{{ url_for('eleve_modifier_info') }}">✏️ Modifier Infos</a></li>
+        <li><a href="{{ url_for('eleve_login') }}">🚪 Déconnexion</a></li>
+    </ul>
+</aside>
+
+<div class="main-content">
+
+<h1>Tableau de bord Élève</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category,message in messages %}
+<div class="alert alert-{{'error' if category=='error' else 'success'}}">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
+<!-- ===== STATISTIQUES ===== -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>{{ rdv_avenir|length }}</h3>
+        <p>Rendez-vous à venir</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ historique|length }}</h3>
+        <p>Consultations passées</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ dossier.groupe_sanguin or "—" }}</h3>
+        <p>Groupe sanguin</p>
+    </div>
+</div>
+
+<!-- ====================== RDV DU JOUR ====================== -->
+<div class="card">
+<h2>📅 Rendez-vous d'aujourd'hui</h2>
+
+{% if rdv_jour %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Heure</th>
+            <th>Médecin</th>
+            <th>Type</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for rdv in rdv_jour %}
+        <tr>
+            <td>{{ rdv.heure_rend }}</td>
+            <td>Dr {{ rdv.nom_medecin }} {{ rdv.prénom_medecin }}</td>
+            <td>{{ rdv.type_rend }}</td>
+            <td>{{ rdv.statut }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Aucun rendez-vous aujourd'hui.</p>
+{% endif %}
+</div>
+
+<!-- ====================== RDV À VENIR ====================== -->
+<div class="card">
+<h2>📅 Prochains rendez-vous</h2>
+
+{% if rdv_avenir %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Médecin</th>
+            <th>Spécialité</th>
+            <th>Type</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for rdv in rdv_avenir %}
+        <tr>
+            <td>{{ rdv.date_rend.strftime('%d/%m/%Y') }}</td>
+            <td>{{ rdv.heure_rend }}</td>
+            <td>Dr {{ rdv.prénom_medecin }} {{ rdv.nom_medecin }}</td>
+            <td>{{ rdv.spécialiste or '—' }}</td>
+            <td>{{ rdv.type_rend }}</td>
+            <td>{{ rdv.statut }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Vous n'avez pas de rendez-vous à venir.</p>
+<a href="{{ url_for('eleve_prendre_rendez_vous') }}" class="btn btn-primary">Prendre un rendez-vous</a>
+{% endif %}
+</div>
+
+<!-- ====================== HISTORIQUE ====================== -->
+<div class="card">
+<h2>📋 Historique des consultations</h2>
+
+{% if historique %}
+<table class="table">
+<thead>
+<tr>
+    <th>Date</th>
+    <th>Médecin</th>
+    <th>Analyses</th>
+    <th>État de santé</th>
+</tr>
+</thead>
+<tbody>
+{% for c in historique %}
+<tr>
+    <td>{{ c.date_consult.strftime('%d/%m/%Y') }}</td>
+    <td>Dr {{ c.prénom_medecin }} {{ c.nom_medecin }}</td>
+    <td>{{ c.analyses or '-' }}</td>
+    <td>{{ c.état_malade or '-' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p>Pas encore de consultations.</p>
+{% endif %}
+</div>
+
+</div>
+</div>
+</div>
+</main>
+<form action="{{ url_for('delete_account') }}" method="POST" 
+      onsubmit="return confirm('Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible !');">
+    <button type="submit" class="btn btn-danger">
+        <i class="fa fa-trash"></i> Supprimer mon compte
+    </button>
+</form>
+<footer><div class="container"><p>&copy; 2025 Système Médical.</p></div></footer>
+
+</body>
+</html>

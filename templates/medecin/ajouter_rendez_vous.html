@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Rendez-vous</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header>
+    <nav class="topbar">
+        <div class="logo">🏥 Système Médical</div>
+        <a class="btn-retour" href="{{ url_for('medecin_dashboard') }}">⬅ Retour au Dashboard</a>
+    </nav>
+</header>
+<style>
+body{font-family: Arial;background:#f5f5f5;margin:0;}
+.container{width:45%; background:white; margin:50px auto; padding:25px;border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.2);}
+h2{text-align:center;}
+input,select,textarea{width:100%;padding:10px;margin-bottom:15px;border:1px solid #bbb;border-radius:5px;}
+button{width:100%;padding:12px;background:#007bff;color:white;border:none;border-radius:5px;}
+.msg{text-align:center;color:rgb(44, 54, 234);font-weight:bold;}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>➕ Ajouter un rendez-vous</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category,message in messages %}
+<p class="msg">{{ message }}</p>
+{% endfor %}
+{% endwith %}
+
+<form method="POST">
+
+<form method="POST"> <label>Nom de l'élève :</label> <input type="text" name="nom_eleve" required> <label>Prénom de l'élève :</label> <input type="text" name="prenom_eleve" required> <label>N.E. (ID de l'élève) :</label> <input type="text" name="id_eleve" required>
+
+<label>Date :</label>
+<input type="date" name="date_rdv" required>
+
+<label>Heure :</label>
+<select name="heure_rdv" required>
+<option value="">Sélectionner</option>
+{% for h in ["08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"] %}
+<option value="{{ h }}">{{ h }}</option>
+{% endfor %}
+</select>
+
+<label>Type de rendez-vous :</label>
+<select name="type_rend" required>
+    <option value="consultation">Consultation</option>
+    <option value="urgence">Urgence</option>
+    <option value="suivi">Suivi</option>
+    <option value="vaccination">Vaccination</option>
+</select>
+
+<button type="submit">Valider le rendez-vous</button>
+</form>
+
+
+

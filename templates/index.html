@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système Médical - Accueil</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url("/static/images/background.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        /* Container global */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255,255,255,0.95);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.4rem;
+            margin-bottom: 0.6rem;
+            color: #ffffff;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #f1f1f1;
+        }
+
+        /* Cards */
+        .features {
+            padding: 1.5rem 0;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            width: 250px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #1b085f;
+        }
+
+        .btn-secondary:hover {
+            background: #161552;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            background: rgba(255,255,255,0.95);
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card {
+                width: 90%;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo">🏥 Système Médical</div>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Bienvenue dans notre Système Médical</h1>
+            <p>Gérez vos rendez-vous médicaux et consultations en ligne</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="stats-grid">
+
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/eleve.jpeg') }}" alt="Élèves">
+                    <h3>🎓 Élèves</h3>
+                    <a href="{{ url_for('espace_eleve') }}" class="btn btn-primary">Accéder</a>
+                </div>
+
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/doctor.jpeg') }}" alt="Médecins">
+                    <h3>👨‍⚕️ Médecin</h3>
+                    <a href="{{ url_for('espace_medecin') }}" class="btn btn-secondary">Accéder</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 Système Médical. Réalisé par Chaffii Hafsa & El-Mouhtarif Ikram</p>
+    </div>
+</footer>
+
+</body>
+</html>

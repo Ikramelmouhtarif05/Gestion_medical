@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dossier Médical Élève</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+body { font-family: "Segoe UI", sans-serif; background:#f4f7fa; padding:30px;}
+.container{background:#fff;padding:25px;max-width:750px;margin:auto;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+.top-nav { margin-bottom:20px; }
+.top-btn { background:#6c757d;color:white;padding:10px 14px;border-radius:6px;text-decoration:none;font-size:15px;transition:0.3s; }
+.top-btn:hover { background:#5a6268; }
+
+h2{text-align:center;color:#007bff;margin-bottom:20px;}
+.info-box{background:#eef5ff;padding:15px;border-left:4px solid #007bff;margin-bottom:20px;border-radius:6px;}
+label{font-weight:bold;margin-top:10px;display:block;}
+input,textarea,select{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;margin-top:5px;margin-bottom:15px;font-size:15px;}
+button{padding:12px 18px;border:none;color:white;cursor:pointer;background:#28a745;font-size:16px;border-radius:6px;transition:0.3s;}
+button:hover{ background:#218838;}
+a.back{display:inline-block;margin-top:15px;color:#007bff;text-decoration:none;font-weight:bold;}
+a.back:hover{text-decoration:underline;}
+
+.flash-box{max-width:700px;margin:auto;}
+.flash{padding:12px;border-radius:6px;margin-bottom:10px;font-size:15px;text-align:center;}
+.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+
+table{width:100%;border-collapse:collapse;margin-top:25px;}
+th,td{border:1px solid #ddd;padding:10px;text-align:center;}
+th{background:#007bff;color:white;}
+
+.action-btn{padding:8px 12px;border-radius:5px;text-decoration:none;font-size:14px;color:white;}
+.btn-view{background:#17a2b8;}
+.btn-edit{background:#ffc107;color:#000;}
+.btn-view:hover{opacity:.8;}
+.btn-edit:hover{opacity:.8;}
+</style>
+</head>
+<body>
+
+<div class="flash-box">
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+ {% for category, message in messages %}
+   <div class="flash {{ 'success' if category=='success' else 'error' }}">{{ message }}</div>
+ {% endfor %}
+{% endif %}
+{% endwith %}
+</div>
+
+<div class="container">
+
+<!-- 🔹 Bouton retour Dashboard -->
+<div class="top-nav">
+    <a href="{{ url_for('medecin_dashboard') }}" class="top-btn">⬅ Retour au Dashboard</a>
+</div>
+
+<h2>📁 Dossier médical</h2>
+
+<div class="info-box">
+ <p><strong>Élève :</strong> {{ eleve.prénom_eleve }} {{ eleve.nom_eleve }}</p>
+ <p><strong>NE :</strong> {{ eleve.NE }}</p>
+ <p><strong>Classe :</strong> {{ eleve.classe_niveau_d_étude }}</p>
+ <p><strong>Date de naissance :</strong> {{ eleve.date_naissance }}</p>
+</div>
+
+<form method="POST" action="{{ url_for('update_medical', ne=eleve.NE) }}">
+
+ <label>Groupe sanguin :</label>
+ <select name="groupe_sanguin" required>
+  <option value="" disabled {% if not dossier %}selected{% endif %}>-- Sélectionner --</option>
+  {% for type in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}
+  <option value="{{ type }}" {% if dossier and dossier.groupe_sanguin==type %}selected{% endif %}>{{ type }}</option>
+  {% endfor %}
+ </select>
+
+ <label>Maladies chroniques :</label>
+ <textarea name="mld_chr" rows="4">{{ dossier.mld_chr if dossier else '' }}</textarea>
+
+ <button type="submit">{% if dossier %}Modifier le dossier{% else %}Créer le dossier{% endif %}</button>
+</form>
+
+<hr>
+
+<h3 style="margin-top:35px;color:#007bff;">📜 Historique des consultations</h3>
+
+{% if historique %}
+<table>
+<thead>
+<tr>
+ <th>Date Consultation</th>
+ <th>Ordonnance</th>
+ <th>Durée Ordonnance</th>
+ <th>Etat Malade</th>
+ <th>Analyses</th>
+</tr>
+</thead>
+<tbody>
+{% for h in historique %}
+<tr>
+ <td>{{ h.date_consult.strftime('%d/%m/%Y') }}</td>
+ <td>{{ h.médicaments if h.médicaments else 'Aucune' }}</td>
+ <td>{{ h.durée if h.médicaments else 'Aucune' }}</td>
+ <td>{{ h.état_malade if h.état_malade else '---' }}</td>
+  <td>{{ h.analyses if h.analyses else '---' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<p style="text-align:center;margin-top:10px;">Aucun rendez-vous enregistré.</p>
+{% endif %}
+
+<a href="{{ url_for('liste_eleves_dossier') }}" class="back">⬅ Retour à la liste</a>
+
+</div>
+</body>
+</html>

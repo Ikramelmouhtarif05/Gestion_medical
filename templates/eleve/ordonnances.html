@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordonnances - Système Médical</title>
+
+    <!-- CSS interne spécifique à la page ordonnances -->
+    <style>
+        /* ---------------------- Styles généraux ---------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url("/static/images/WhatsApp Image 2025-12-27 at 22.49.02.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: -1;
+        }
+
+        .ordonnance-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ordonnance-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .ordonnance-nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .ordonnance-nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .ordonnance-nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Main */
+        main {
+            margin-top: 100px;
+            padding: 2rem 0;
+        }
+
+        .ordonnance-auth-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .ordonnance-auth-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .ordonnance-auth-card h2 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        /* Alertes */
+        .ordonnance-alert {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            animation: ordonnance-slideIn 0.3s ease;
+        }
+
+        .ordonnance-alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #48bb78;
+        }
+
+        .ordonnance-alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border-left: 4px solid #f56565;
+        }
+
+        .ordonnance-alert-info {
+            background: #bee3f8;
+            color: #2c5282;
+            border-left: 4px solid #4299e1;
+        }
+
+        /* Table */
+        .ordonnance-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-top: 1rem;
+        }
+
+        .ordonnance-table th,
+        .ordonnance-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .ordonnance-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .ordonnance-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .ordonnance-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Boutons */
+        .ordonnance-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0;
+        }
+
+        .ordonnance-btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .ordonnance-btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .ordonnance-btn-secondary {
+            background: #1b085f;
+            color: white;
+        }
+
+        .ordonnance-btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72,187,120,0.4);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        @keyframes ordonnance-slideIn {
+            from {opacity: 0; transform: translateX(-20px);}
+            to {opacity: 1; transform: translateX(0);}
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ordonnance-auth-card {
+                padding: 2rem;
+            }
+
+            .ordonnance-table th, .ordonnance-table td {
+                padding: 0.75rem;
+            }
+
+            .ordonnance-nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <nav class="ordonnance-container">
+        <div class="ordonnance-logo">🏥 Système Médical</div>
+        <ul class="ordonnance-nav-links">
+            <li><a href="{{ url_for('eleve_dashboard') }}">Retour au Dashboard</a></li>
+            <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <div class="ordonnance-container">
+        <div class="ordonnance-auth-container">
+            <div class="ordonnance-auth-card">
+                <h2>💊 Mes Ordonnances</h2>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="ordonnance-alert ordonnance-alert-{{ 'error' if category == 'error' else 'success' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% if ordonnances %}
+                    <table class="ordonnance-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Médecin</th>
+                                <th>Médicaments</th>
+                                <th>Durée</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ordonnance in ordonnances %}
+                            <tr>
+                                 <td>{{ ordonnance['date_'].strftime('%d/%m/%Y') if ordonnance['date_'] else '-' }}</td>
+                                <td>Dr {{ ordonnance['prénom_medecin'] }} {{ ordonnance['nom_medecin'] }}</td>
+                                <td>{{ ordonnance['médicaments'] }}</td>
+                                <td>{{ ordonnance['durée'] or '-' }}</td>
+                                <td>
+                                    <a href="{{ url_for('imprimer_ordonnance', id=ordonnance['id_ordonnance']) }}"
+                                       class="ordonnance-btn ordonnance-btn-primary">🖨️ Imprimer</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="ordonnance-alert ordonnance-alert-info">Vous n'avez pas encore d'ordonnances.</div>
+                    <p><a href="{{ url_for('eleve_dashboard') }}" class="ordonnance-btn ordonnance-btn-primary">Prendre un rendez-vous</a></p>
+                {% endif %}
+                <p style="margin-top: 2rem;">
+                    <a href="{{ url_for('eleve_dashboard') }}" class="ordonnance-btn ordonnance-btn-secondary">
+                        Retour au tableau de bord
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="ordonnance-container">
+        <p>&copy; 2025 Système Médical.</p>
+    </div>
+</footer>
+</body>
+</html>

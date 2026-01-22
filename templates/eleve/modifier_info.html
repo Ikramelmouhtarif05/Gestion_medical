@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Informations - Système Médical</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🏥 Système Médical</div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('eleve_dashboard') }}">Retour au dashboard</a></li>
+                <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>✏️ Modifier mes informations</h2>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('eleve_modifier_info') }}">
+                    
+                        <div class="form-group">
+                        <label for="ne">NE</label>
+                        <input type="text" id="ne" class="form-control" value="{{ eleve.NE }}" readonly>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input type="text" id="nom" name="nom" class="form-control" value="{{ eleve.nom_eleve }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input type="text" id="prenom" name="prenom" class="form-control" value="{{ eleve.prénom_eleve }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="classe_niveau_d_étude">Classe et Niveau d'études</label>
+                            <input type="text" id="classe_niveau_d_étude" name="classe_niveau_d_étude" class="form-control" value="{{ eleve.classe_niveau_d_étude }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telephone">Téléphone</label>
+                            <input type="tel" id="telephone" name="telephone" class="form-control" value="{{ eleve.tele }}">
+                        </div>
+                        
+                        <div class="form-group">
+                          <label for="date_naissance">Date de naissance</label>
+                          <input type="date" id="date_naissance" name="date_naissance" class="form-control"
+                           value="{{ eleve.date_naissance.strftime('%Y-%m-%d') if eleve.date_naissance else '' }}">
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Mettre à jour</button>
+                    </form>
+                    
+                    <p style="margin-top: 2rem;">
+                        <a href="{{ url_for('eleve_dashboard') }}" class="btn btn-secondary">Retour au tableau de bord</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Système Médical.</p>
+        </div>
+    </footer>
+</body>
+</html>

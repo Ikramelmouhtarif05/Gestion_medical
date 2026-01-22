@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossier Médical - Système Médical</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🏥 Système Médical</div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('eleve_dashboard') }}">Retour au dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <h2>📁 Dossier Médical</h2>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    {% if dossier_data %}
+                        {% set dossier = dossier_data[0] %}
+                        <div class="card">
+                            <h3>Informations médicales</h3>
+                            <div class="form-group">
+                                <label><strong>Groupe sanguin:</strong></label>
+                                <p>{{ dossier.groupe_sanguin or 'Non renseigné' }}</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><strong>Maladies chroniques:</strong></label>
+                                <p>{{ dossier.mld_chr or 'Non renseigné' }}</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><strong>Date de création du dossier:</strong></label>
+                                <p>{{ dossier.date_creation.strftime('%d/%m/%Y') if dossier.date_creation else 'Non renseignée' }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if dossier_data|length > 1 or dossier.médicaments %}
+                        <div class="card">
+                            <h3>Historique des ordonnances</h3>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Médicaments</th>
+                                        <th>Durée</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in dossier_data %}
+                                    {% if item.médicaments %}
+                                    <tr>
+                                        <td>{{ item.date_ordonnance.strftime('%d/%m/%Y') if item.date_ordonnance else '-' }}</td>
+                                        <td>{{ item.médicaments }}</td>
+                                        <td>{{ item.durée or '-' }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <p style="margin-top: 1rem;">
+                                <a href="{{ url_for('eleve_ordonnances') }}" class="btn btn-primary">Voir toutes les ordonnances</a>
+                            </p>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            Votre dossier médical n'a pas encore été complété. Il sera mis à jour lors de votre première consultation.
+                        </div>
+                    {% endif %}
+                    
+                    <p style="margin-top: 2rem;">
+                        <a href="{{ url_for('eleve_dashboard') }}" class="btn btn-secondary">Retour au tableau de bord</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Système Médical.</p>
+        </div>
+    </footer>
+</body>
+</html>

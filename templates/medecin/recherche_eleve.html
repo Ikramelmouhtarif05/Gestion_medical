@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header>
+    <nav class="topbar">
+        <div class="logo">🏥 Système Médical</div>
+        <a class="btn-retour" href="{{ url_for('medecin_dashboard') }}">⬅ Retour au Dashboard</a>
+    </nav>
+</header>  
+    <!-- Lien vers ton CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container main-content" style="margin-top: 100px;">
+
+    <!-- Formulaire de recherche -->
+    <form method="POST" class="post-search-form">
+        <input type="text" name="NE" placeholder="Rechercher par NE" required>
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <!-- Affichage des informations de l'élève -->
+    {% if eleve %}
+    <div class="eleve-info">
+        <h3>{{ eleve.nom_eleve }} {{ eleve.prénom_eleve }}</h3>
+        <p>Téléphone : {{ eleve.tele }}</p>
+        <p>Classe : {{ eleve.classe_niveau_d_étude }}</p>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Médecin - Système Médical</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <nav class="container">
+        <div class="logo">🏥 Système Médical</div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}">Accueil</a></li>
+            <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+<div class="container">
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Dr {{ medecin.prénom_medecin }} {{ medecin.nom_medecin }}</h3>
+            <p style="font-size:0.9rem;color:#666;margin-bottom:1rem;">
+                {{ medecin.spécialiste }}
+            </p>
+
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('medecin_dashboard') }}" class="active">📊 Tableau de bord</a></li>
+                <li><a href="{{ url_for('medecin_ajouter_rendez_vous') }}">➕ Ajouter Rendez-vous</a></li>
+                <li><a href="{{ url_for('medecin_recherche') }}">🔍 Rechercher Élève</a></li>
+                <li><a href="{{ url_for('medecin_historique') }}">📋 Historique(Eleves_rendez-vous)</a></li>
+                <li><a href="{{ url_for('medecin_modifier_info') }}">✏️ Modifier Infos</a></li>
+                <li><a href="{{ url_for('logout') }}">🚪 Déconnexion</a></li>
+            </ul>
+
+            <!-- Lien vers dossier médical -->
+            <div style="margin-top:2rem;padding:1rem;background:#f0f0f0;border-radius:8px;">
+                <p style="font-size:0.9rem;"><strong>Dossier Médical :</strong></p>
+                <a href="{{ url_for('liste_eleves_dossier') }}" class="btn btn-info btn-sm">
+                    📄 Consulter dossiers élèves
+                </a>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <div class="main-content">
+            <h1>Tableau de bord Médecin</h1>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'error' if category=='error' else 'success' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>{{ rdv_jour|length }}</h3>
+                    <p>Rendez-vous aujourd'hui</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ consultations|length }}</h3>
+                    <p>Consultations prévues</p>
+                </div>
+            </div>
+
+            <!-- Rendez-vous du jour -->
+            <div class="card">
+                <h2>📅 Rendez-vous d'aujourd'hui</h2>
+                {% if rdv_jour %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Heure</th>
+                            <th>Élève</th>
+                            <th>Téléphone</th>
+                            <th>Type</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for rdv in rdv_jour %}
+                        <tr>
+                            <td>{{ rdv.heure_rend }}</td>
+                            <td>{{ rdv.prénom_eleve }} {{ rdv.nom_eleve }}</td>
+                            <td>{{ rdv.tele or '-' }}</td>
+                            <td>{{ rdv.type_rend or 'Standard' }}</td>
+                            <td>{{ rdv.statut }}</td>
+                            <td>
+                                {% if rdv.id_consultation %}
+                                    <a href="{{ url_for('medecin_consultation', id_consultation=rdv.id_consultation) }}" class="btn btn-primary">Consultation</a>
+                                {% else %}
+                                    <a href="{{ url_for('creer_consultation', ne=rdv.NE) }}" class="btn btn-primary"> consultation</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <p>Aucun rendez-vous aujourd'hui.</p>
+                {% endif %}
+            </div>
+
+            <!-- Consultations -->
+<div class="card">
+    <h2>📆  rendez-vous prochainement</h2>
+
+    {% if rdv_prochains %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Élève</th>
+                <th>Téléphone</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rdv in rdv_prochains %}
+            <tr>
+                <td>{{ rdv.date_rend }}</td>
+                <td>{{ rdv.heure_rend }}</td>
+                <td>{{ rdv.prénom_eleve }} {{ rdv.nom_eleve }}</td>
+                <td>{{ rdv.tele or '-' }}</td>
+                <td>{{ rdv.type_rend }}</td>
+                <td>{{ rdv.statut }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Aucun rendez-vous prévu prochainement.</p>
+    {% endif %}
+</div>
+            <!-- Infos médecin -->
+            <div class="card">
+                <h2>🩺 Mes informations</h2>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div><strong>Email :</strong> {{ medecin.adresse_email }}</div>
+                    <div><strong>Téléphone :</strong> {{ medecin['Tele_medecin'] or 'Non renseigné' }}</div>
+                    <div><strong>Spécialité :</strong> {{ medecin.spécialiste }}</div>
+                    <div><strong>Adresse :</strong> {{ medecin.adresse_hebergement or 'Non renseignée' }}</div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</main>
+
+<form action="{{ url_for('delete_account') }}" method="POST" 
+      onsubmit="return confirm('Voulez-vous vraiment supprimer votre compte ? Cette action est irréversible !');">
+    <button type="submit" class="btn btn-danger">
+        <i class="fa fa-trash"></i> Supprimer mon compte
+    </button>
+</form>
+
+
+
+<footer>
+    <div class="container"><p>&copy; 2025 Système Médical</p></div>
+</footer>
+
+</body>
+</html>

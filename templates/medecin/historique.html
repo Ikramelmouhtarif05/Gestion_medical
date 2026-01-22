@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <header>
+    <nav class="topbar">
+        <div class="logo">🏥 Système Médical</div>
+        
+        <a class="btn-retour" href="{{ url_for('medecin_dashboard') }}">⬅ Retour au Dashboard</a>
+    </nav>
+</header>
+     
+    <!-- Lien vers ton CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Conteneur principal -->
+    <div class="container main-content" style="margin-top: 100px;">
+        
+        
+        <!-- Formulaire de recherche -->
+        <form method="get" class="search-form">
+            <input type="text" name="ne" placeholder="Entrer NE de l'élève"
+                   value="{{ ne_search }}" class="input-search">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </form>
+
+        <!-- Table des résultats -->
+        <div class="main-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>NE</th>
+                        <th>Élève</th>
+                        <th>Date</th>
+                        <th>Heure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if rdv %}
+                    {% for r in rdv %}
+                        <tr>
+                            <td>{{ r.NE }}</td>
+                            <td>{{ r.prénom_eleve }} {{ r.nom_eleve }}</td>
+                            <td>{{ r.date_rend }}</td>
+                            <td>{{ r.heure_rend }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="4">Aucun résultat trouvé.</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

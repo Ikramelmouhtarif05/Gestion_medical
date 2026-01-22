@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ordonnance Médicale</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            width: 80%;
+            margin: auto;
+            background: #f8f8f8;
+        }
+        .ordonnance-container {
+            background: #fff;
+            padding: 25px;
+            border: 1px solid #ccc;
+            margin-top: 30px;
+            border-radius: 6px;
+        }
+        h2 {
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .info {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .medicaments {
+            margin-top: 20px;
+        }
+        .medicaments ul {
+            list-style-type: square;
+            font-size: 17px;
+            margin-left: 20px;
+        }
+        .footer {
+            text-align: right;
+            margin-top: 40px;
+            font-size: 16px;
+        }
+        .print-btn {
+            margin-top: 20px;
+            display: block;
+            width: fit-content;
+            padding: 10px 17px;
+            background: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .print-btn:hover {
+            background:#0056b3;
+        }
+        @media print {
+            .print-btn { display: none; }
+            body { background: #fff; width:100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ordonnance-container">
+    <h2>Ordonnance Médicale</h2>
+
+    {% if ordonnance %}
+
+    <div class="info">
+        <p><b>Médecin :</b> Dr {{ ordonnance.nom_medecin }} {{ ordonnance.prénom_medecin }}</p>
+        <p><b>Date consultation :</b> {{ ordonnance.date_consult.strftime('%d/%m/%Y') }}</p>
+        <p><b></b>Numéro Etudiant :</b> {{ ordonnance.NE }}</p>
+    </div>
+
+    <div class="medicaments">
+        <h3>Médicaments prescrits :</h3>
+        <ul>
+            {% for line in ordonnance.médicaments.split('\n') %}
+                <li>{{ line }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <a href="#" class="print-btn" onclick="window.print()">🖨 Imprimer</a>
+
+    {% else %}
+        <p style="color:red;text-align:center;">Aucune ordonnance trouvée.</p>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
